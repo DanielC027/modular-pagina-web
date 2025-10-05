@@ -9,6 +9,7 @@ export default {
       fontFamily: {
         dmsans: ["'DM Sans'", "sans-serif"],
         moontime: ["'Moontime'", "cursive"],
+        belleza: ["'Belleza'", "sans-serif"],
       },
     },
   },

@@ -1,11 +1,17 @@
 import { useState } from "react";
-import bgImage from "/bg-image.jpg"; // tu fondo
+import { useNavigate } from "react-router-dom";
+
+import bgImage from "/bg-image.jpg";
 
 import userIcon from "/login/user.svg"
 import passwordIcon from "/login/password.svg"
 import eyeIcon from "/login/eye.svg"
+import eyeNotIcon from "/login/eye_not.svg"
+
+import NavBar from "./NavBar";
 
 function Login() {
+  const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
 
   return (
@@ -19,11 +25,7 @@ function Login() {
       {/* Contenido */}
       <div className="relative z-10 flex flex-col min-h-screen">
         {/* Navbar */}
-        <nav className="flex flex-wrap gap-6 p-6 text-sm font-semibold justify-center sm:justify-start">
-          <a href="#" className="hover:font-bold">INICIO</a>
-          <a href="#" className="hover:font-bold">GRAFICOS</a>
-          <a href="#" className="hover:font-bold">EXPORTAR</a>
-        </nav>
+        <NavBar/>
 
         {/* Contenedor central */}
         <div className="flex flex-1 flex-col lg:flex-row items-center justify-center px-6 gap-12">
@@ -58,7 +60,7 @@ function Login() {
                 className="ml-2"
               >
                 <span className="material-icons">
-                  {showPassword ? "visibility" : <img src={eyeIcon} className="h-4" />}
+                  {showPassword ? <img src={eyeNotIcon} className="h-4" /> : <img src={eyeIcon} className="h-4" />}
                 </span>
               </button>
             </div>
