@@ -14,6 +14,10 @@ function Login() {
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
 
+  const iniciar_sesion = () => {
+      navigate('/Home');
+  }
+  
   return (
     <div
       className="relative h-screen w-screen bg-cover bg-center text-white flex flex-col"
@@ -65,7 +69,7 @@ function Login() {
               </button>
             </div>
 
-            <button className="w-full bg-white text-black font-semibold py-2 rounded-full hover:bg-gray-200 transition">
+            <button className="w-full bg-white text-black font-semibold py-2 rounded-full hover:bg-gray-200 transition" onClick={iniciar_sesion}>
               INICIAR
             </button>
           </div>

@@ -6,7 +6,6 @@ export default function NavBar(){
         <nav className="flex flex-wrap gap-6 p-6 text-sm font-semibold justify-center sm:justify-start cursor-pointer">
           <a onClick={() => navigate("/Home")} className="hover:font-bold">INICIO</a>
           <a onClick={() => navigate("/Graphics")} className="hover:font-bold">GRAFICOS</a>
-          <a onClick={() => navigate("/Export")} className="hover:font-bold">EXPORTAR</a>
         </nav>
     )
 }

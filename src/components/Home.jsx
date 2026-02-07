@@ -1,7 +1,9 @@
+
 import NavBar from "./NavBar";
 import bgImage from "/bg-image.jpg";
 
 export default function Home() {
+
     return (
         <div
             className="relative h-screen w-screen bg-cover bg-center text-white flex flex-col"
