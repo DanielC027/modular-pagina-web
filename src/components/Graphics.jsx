@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useWebSocket } from "./ConexionWebsockets";
 import NavBar from "./NavBar";
-import bgImage from "/bg-image.jpg";
+import bgImage from "../assets/bg/fondo.png";
 
 import {
     Chart as ChartJS,
