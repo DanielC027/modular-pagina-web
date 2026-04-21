@@ -6,8 +6,12 @@ export function useWebSocket(url, onMessage) {
 
   useEffect(() => {
     if (isMounted.current) return;
+    
+    // GET THE SESSION
+    //answer = fetch()
+    
     isMounted.current = true;
-
+    
     const ws = new WebSocket(url);
     wsRef.current = ws;
 

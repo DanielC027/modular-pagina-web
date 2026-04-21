@@ -102,7 +102,7 @@ export default function Graphics() {
     }, [chartData]);
 
     // WebSocket para recibir datos en tiempo real
-    useWebSocket("ws://127.0.0.1:8000/ws", (data) => {
+    useWebSocket("ws://localhost:8000/ws", (data) => {
         setChartData((prev) => ({
             ...prev,
             [data.tipo === "analisis_anual"
