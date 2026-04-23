@@ -1,46 +1,53 @@
 import { useEffect, useRef } from "react";
 
 export function useWebSocket(url, onMessage) {
-  const wsRef = useRef(null);
-  const isMounted = useRef(false);
+    const wsRef = useRef(null);
+    const onMessageRef = useRef(onMessage);
 
-  useEffect(() => {
-    if (isMounted.current) return;
-    
-    // GET THE SESSION
-    //answer = fetch()
-    
-    isMounted.current = true;
-    
-    const ws = new WebSocket(url);
-    wsRef.current = ws;
+    // Mantener siempre la ultima version del callback sin recrear conexion
+    useEffect(() => {
+        onMessageRef.current = onMessage;
+    }, [onMessage]);
 
-    ws.onopen = () => {
-      console.log("WS conectado");
-    };
+    useEffect(() => {
+        let ws;
+        let reconnectTimeout;
 
-    ws.onmessage = (event) => {
-      try {
-        onMessage(JSON.parse(event.data));
-      } catch {
-        console.error("Mensaje no es JSON");
-      }
-    };
+        const connect = () => {
+            console.log("🟢 Conectando WS...");
+            ws = new WebSocket(url);
+            wsRef.current = ws;
 
-    ws.onerror = () => {
-      console.error("WS error");
-    };
+            ws.onopen = () => {
+                console.log("✅ WebSocket conectado");
+            };
 
-    ws.onclose = () => {
-      console.log("WS cerrado");
-    };
+            ws.onmessage = (event) => {
+                try {
+                    const data = JSON.parse(event.data);
+                    onMessageRef.current(data);
+                } catch (err) {
+                    console.error("Error parseando mensaje:", err);
+                }
+            };
 
-    return () => {
-      if (wsRef.current?.readyState === WebSocket.OPEN) {
-        wsRef.current.close();
-      }
-    };
-  }, [url]);
+            ws.onclose = () => {
+                console.log("🔴 WebSocket cerrado. Reintentando en 3s...");
+                reconnectTimeout = setTimeout(connect, 3000);
+            };
 
-  return wsRef;
+            ws.onerror = (err) => {
+                console.error("⚠️ WebSocket error:", err);
+                ws.close();
+            };
+        };
+
+        connect();
+
+        return () => {
+            console.log("🧹 Cerrando conexión WS");
+            if (reconnectTimeout) clearTimeout(reconnectTimeout);
+            if (ws) ws.close();
+        };
+    }, [url]);
 }
