@@ -23,7 +23,7 @@ export default function NavBar(){
           <a onClick={() => navigate("/home")} className="hover:font-bold">INICIO</a>
           <a onClick={() => navigate("/graphics")} className="hover:font-bold">GRAFICOS</a>
           <div>
-          {authenticated ? <a onClick={handleLogout} className="hover:font-bold justify-right">Cerrar Sesion</a> : <></>}
+          {authenticated ? <a onClick={handleLogout} className="hover:font-bold justify-right">Cerrar Sesión</a> : <></>}
           </div>
         </nav>
     )

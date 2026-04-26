@@ -19,7 +19,6 @@ import {
 } from "chart.js";
 import { Bar } from "react-chartjs-2";
 
-// Registrar Chart.js
 ChartJS.register(
     CategoryScale,
     LinearScale,
@@ -30,7 +29,6 @@ ChartJS.register(
     Legend
 );
 
-// Colores
 const colors = [
     "#6366F1",
     "#F87171",
@@ -41,7 +39,6 @@ const colors = [
     "#F472B6",
 ];
 
-// Generar data
 const generateChartData = (data) => ({
     labels: data.valores.etiquetas,
     datasets: [
@@ -53,6 +50,8 @@ const generateChartData = (data) => ({
         },
     ],
 });
+
+
 
 const chartOptions = {
     responsive: true,
@@ -95,34 +94,89 @@ export default function Graphics() {
         day: null,
     });
 
-    // Cargar localStorage
+    const [loading, setLoading] = useState(false);
+    const [lastFecha, setLastFecha] = useState(null);
+
+    // ---------------------------
+    // LocalStorage
+    // ---------------------------
     useEffect(() => {
         const saved = localStorage.getItem("chartData");
-        if (saved) {
-            setChartData(JSON.parse(saved));
-        }
+        if (saved) setChartData(JSON.parse(saved));
     }, []);
 
-    // Guardar localStorage
     useEffect(() => {
         localStorage.setItem("chartData", JSON.stringify(chartData));
     }, [chartData]);
 
-    // 🔥 Handler estable (CLAVE)
-    const handleMessage = useCallback((data) => {
-        setChartData((prev) => ({
-            ...prev,
-            [data.tipo === "analisis_anual"
-                ? "year"
-                : data.tipo === "analisis_mensual"
-                ? "month"
-                : data.tipo === "analisis_semanal"
-                ? "week"
-                : "day"]: data,
-        }));
-    }, []);
+    // ---------------------------
+    // API CALL
+    // ---------------------------
+    const fetchAnalysis = async (period, fecha) => {
+        try {
+            const res = await fetch(`http://localhost:8000/analisis/obtener_analisis?fecha=${fecha}&periodo=${period}`, {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                credentials: "include",
+            });
 
-    // WebSocket
+            if (!res.ok) throw new Error("Error API");
+
+            return await res.json();
+        } catch (err) {
+            console.error("Fetch error:", err);
+            return null;
+        }
+    };
+
+    // ---------------------------
+    // WebSocket Handler
+    // ---------------------------
+    const handleMessage = useCallback(async (data) => {
+        console.log("WS message recibido:", data);
+
+        if (!data?.fecha) {
+            console.warn("Mensaje sin fecha:", data);
+            return;
+        }
+
+        // evitar duplicados
+        if (data.fecha === lastFecha) return;
+        setLastFecha(data.fecha);
+
+        if (loading) return;
+        setLoading(true);
+
+        try {
+            const fecha = new Date(data.fecha)
+                .toISOString()
+                .split("T")[0];
+
+            console.log(fecha)
+
+            const [yearData, monthData, weekData] = await Promise.all([
+                fetchAnalysis("Y", fecha),
+                fetchAnalysis("M", fecha),
+                fetchAnalysis("W", fecha),
+            ]);
+
+            setChartData((prev) => ({
+                ...prev,
+                year: yearData,
+                month: monthData,
+                week: weekData,
+                day: data,
+            }));
+        } catch (err) {
+            console.error("Error general:", err);
+        } finally {
+            setLoading(false);
+        }
+    }, [loading, lastFecha]);
+
+    // WebSocket conexión
     useWebSocket("ws://localhost:8000/ws", handleMessage);
 
     const charts = [
@@ -134,8 +188,7 @@ export default function Graphics() {
 
     return (
         <div>
-            {
-                authenticated ?
+            {authenticated ? (
                 <div
                     className="relative min-h-screen w-screen bg-cover bg-center text-white flex flex-col"
                     style={{ backgroundImage: `url(${bgImage})` }}
@@ -155,18 +208,18 @@ export default function Graphics() {
                             </div>
                         </nav>
 
-                        <div className="flex-1 flex flex-col items-center justify-center px-6 gap-12 w-full max-w-7xl mx-auto">
-                            <h1 className="text-2xl font-bold mb-4">
+                        <div className="flex-1 flex flex-col items-center justify-center px-6 gap-12">
+                            <h1 className="text-2xl font-bold">
                                 Gráficos de Emociones
                             </h1>
 
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 w-full">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 w-full max-w-6xl">
                                 {charts.map(({ title, data }) => (
                                     <div
                                         key={title}
-                                        className="bg-black/50 p-4 rounded-xl flex flex-col items-center justify-center w-full h-64"
+                                        className="bg-black/50 p-4 rounded-xl h-64"
                                     >
-                                        <h2 className="text-xl font-semibold mb-2">
+                                        <h2 className="text-lg font-semibold mb-2">
                                             {title}
                                         </h2>
 
@@ -174,30 +227,19 @@ export default function Graphics() {
                                             <Bar
                                                 data={generateChartData(data)}
                                                 options={chartOptions}
-                                                className="w-full h-full"
                                             />
                                         ) : (
-                                            <p>Cargando datos...</p>
+                                            <p>Cargando...</p>
                                         )}
                                     </div>
                                 ))}
                             </div>
                         </div>
-
-                        <div className="flex justify-center px-6 mt-12">
-                            <hr className="border-gray-400/60 my-4 w-full max-w-6xl" />
-                        </div>
-
-                        <div className="grid grid-cols-2">
-                            <div></div>
-                            <footer className="text-center text-xs py-4">
-                                © 2025 KRYPTÓS. TODOS LOS DERECHOS RESERVADOS.
-                            </footer>
-                        </div>
                     </div>
                 </div>
-                : <Navigate to="/"/>
-        }
+            ) : (
+                <Navigate to="/" />
+            )}
         </div>
     );
 }
