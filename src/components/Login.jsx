@@ -1,5 +1,8 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+
+import { useAuth } from "./Auth/useAuth";
+import { iniciar_sesion } from "./Auth/Auth"; 
 
 import bgImage from "/bg-image.jpg";
 
@@ -11,50 +14,41 @@ import eyeNotIcon from "/login/eye_not.svg"
 import NavBar from "./NavBar";
 
 function Login() {
+  const { authenticated, setAuthenticated } = useAuth();
+
   const navigate = useNavigate();
 
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [errorEstado, setErrorEstado] = useState(false);
 
-  const LINK_BACKEND = "http://localhost:8000/auth/login";
+  useEffect(() => {
+    console.log(authenticated);
+  },[]);
 
-  const iniciar_sesion = async () => {
-    try {
-      const response = await fetch(LINK_BACKEND, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        credentials: "include",
-        body: JSON.stringify({
-          email: email,
-          password: password,
-        }),
-      });
-
-      if (!response.ok) {
-        throw new Error("Credenciales incorrectas");
+  const handleSesion = async () => {
+    try{
+      const respuesta = await iniciar_sesion(email, password);
+      console.log(respuesta);
+      if(respuesta === true){
+        setAuthenticated(true);
+        setErrorEstado(false);
+        navigate("/home");
+      }else{
+        setErrorEstado(true);
       }
+    }catch(error){
 
-      // opcional: si el backend devuelve info
-      const data = await response.json();
-      console.log("Login exitoso:", data);
-
-      // 🚀 redirigir si todo salió bien
-      navigate("/Home");
-
-    } catch (error) {
-      console.error("Error al iniciar sesión:", error);
-      alert("Error al iniciar sesión");
     }
-  };
+  }
 
   return (
     <div
       className="relative h-screen w-screen bg-cover bg-center text-white flex flex-col"
       style={{ backgroundImage: `url(${bgImage})` }}
-    >
+    > 
+
       <div className="absolute inset-0 bg-black/40 z-0" />
 
       <div className="relative z-10 flex flex-col min-h-screen">
@@ -66,7 +60,7 @@ function Login() {
             <h2 className="text-center text-lg font-semibold mb-6">
               INICIO DE SESIÓN
             </h2>
-
+            {errorEstado ? <div><h3 className="text-red-300 font-bold">Error: datos incorrectos, intenta nuevamente</h3></div> : <></>}
             {/* Email */}
             <div className="flex items-center border-b border-white/60 mb-6">
               <img src={userIcon} className="h-4" />
@@ -103,7 +97,7 @@ function Login() {
 
             <button
               className="w-full bg-white text-black font-semibold py-2 rounded-full hover:bg-gray-200 transition"
-              onClick={iniciar_sesion}
+              onClick={handleSesion}
             >
               INICIAR
             </button>
