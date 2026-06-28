@@ -52,9 +52,9 @@ KRYPTOS Frontend permite al usuario visualizar de forma clara e intuitiva los re
 ## 🚀 Instalación
 
 ```bash
-git clone https://github.com/tu_usuario/kryptos-frontend.git
+git clone https://github.com/DanielC027/modular-pagina-web.git
 
-cd kryptos-frontend
+cd modular-pagina-web
 
 npm install
 
