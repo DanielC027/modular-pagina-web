@@ -1,16 +1,79 @@
-# React + Vite
+# 🖥️ KRYPTOS Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Frontend desarrollado con **React.js** para la visualización en tiempo real del análisis emocional generado por la aplicación de escritorio de KRYPTOS.
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## 📌 Descripción
 
-## React Compiler
+KRYPTOS Frontend permite al usuario visualizar de forma clara e intuitiva los resultados obtenidos por el sistema de análisis emocional. La aplicación consume los datos proporcionados por el backend mediante una API REST y recibe actualizaciones en tiempo real utilizando WebSockets.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+---
 
-## Expanding the ESLint configuration
+## ✨ Características
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+- 📊 Dashboard interactivo
+- 📈 Gráficas emocionales
+- ⚡ Actualización en tiempo real
+- 🔐 Autenticación mediante JWT
+- 📱 Diseño responsivo
+
+---
+
+## 🛠️ Tecnologías
+
+- React.js
+- Tailwind
+- React Router Dom
+- WebSockets
+
+---
+
+## 📸 Capturas
+
+### Inicio de sesión
+
+![Login](readme_resources/login.png)
+
+---
+
+### Página principal
+
+![Home](readme_resources/home.png)
+
+---
+
+### Estadísticas
+
+![Graphics](readme_resources/graphics.png)
+
+---
+
+## 🚀 Instalación
+
+```bash
+git clone https://github.com/tu_usuario/kryptos-frontend.git
+
+cd kryptos-frontend
+
+npm install
+
+npm run dev
+```
+
+---
+
+## 📚 Proyecto relacionado
+
+Este repositorio forma parte del proyecto **KRYPTOS** junto con:
+
+- modular-escritorio
+- modular-backend
+
+---
+
+## 👨‍💻 Autor
+
+**Daniel Canela**
+
+Universidad de Guadalajara
